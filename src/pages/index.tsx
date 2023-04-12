@@ -11,10 +11,13 @@ import localFont from "next/font/local";
 import Head from "next/head";
 import Link from "next/link";
 
+import { createProxySSGHelpers as createServerSideHelpers } from "@trpc/react-query/ssg";
 import classNames from "classnames";
-import { api } from "~/utils/api";
 import Image from "next/image";
 import { useState } from "react";
+import SuperJSON from "superjson";
+import { appRouter } from "~/server/api/root";
+import { api } from "~/utils/api";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -167,5 +170,22 @@ const Home: NextPage = () => {
     </>
   );
 };
+
+export async function getStaticProps() {
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    ctx: {},
+    transformer: SuperJSON,
+  });
+
+  await helpers.videos.get.prefetch();
+
+  return {
+    props: {
+      trpcState: helpers.dehydrate(),
+    },
+    revalidate: 60,
+  };
+}
 
 export default Home;
