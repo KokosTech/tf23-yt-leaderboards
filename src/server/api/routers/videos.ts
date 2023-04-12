@@ -1,3 +1,4 @@
+import { log } from "console";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 
@@ -25,6 +26,10 @@ export const videosRouter = createTRPCRouter({
     const videos = await Promise.all(
       playlist.videos
         .filter((video) => video.lengthSeconds > 0)
+        // filter duplicates
+        .filter((video, index, self) => {
+          return index === self.findIndex((v) => v.videoId === video.videoId);
+        })
         .map(async (video) => {
           const ytVideo = await fetchYtVideo(video.videoId);
           return {
