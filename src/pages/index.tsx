@@ -14,6 +14,7 @@ import Link from "next/link";
 import classNames from "classnames";
 import { api } from "~/utils/api";
 import Image from "next/image";
+import { useState } from "react";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -31,6 +32,20 @@ function shortenNameLength(name: string) {
   }
   return name;
 }
+
+const YtThumbnail = (video: { id: string; title: string }) => {
+  const [resolution, setResolution] = useState("maxresdefault");
+
+  return (
+    <Image
+      src={`https://i.ytimg.com/vi/${video.id}/${resolution}.jpg`}
+      alt={video.title}
+      fill
+      style={{ objectFit: "contain" }}
+      onError={() => setResolution("default")}
+    />
+  );
+};
 
 const Home: NextPage = () => {
   const videos = api.videos.get.useQuery(undefined, {
@@ -101,12 +116,7 @@ const Home: NextPage = () => {
                 rel="noopener nofollow"
               >
                 <span className="relative grid aspect-video w-full place-items-center bg-black sm:w-36 ">
-                  <Image
-                    src={`https://i.ytimg.com/vi/${video.id}/default.jpg`}
-                    alt={video.title}
-                    fill
-                    style={{ objectFit: "contain" }}
-                  />
+                  <YtThumbnail id={video.id} title={video.title} />
                   <span className="z-10 flex h-16 w-16 items-center justify-center rounded-full bg-[#68cbe9] p-3 text-2xl font-semibold text-black">
                     #{i + 1}
                   </span>

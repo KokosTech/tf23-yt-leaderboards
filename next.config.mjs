@@ -25,6 +25,11 @@ const config = {
         hostname: "i.ytimg.com",
         pathname: "/vi/*/default.jpg",
       },
+      {
+        protocol: "https",
+        hostname: "i.ytimg.com",
+        pathname: "/vi/*/maxresdefault.jpg",
+      },
     ],
   },
 };
