@@ -66,7 +66,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>TUES Fest 2023 YouTube Video Leaederboards</title>
+        <title>TUES Fest 2023 YouTube Video Leaderboard</title>
         <meta
           name="description"
           content="Класация на YouTube видеата на проектите от TUES Fest 2023. Защото всичко трябва да бъде състезание."
