@@ -1,19 +1,18 @@
-import { type NextPage } from "next";
-import Head from "next/head";
-import Link from "next/link";
-import { Inter } from "next/font/google";
-import localFont from "next/font/local";
 import {
   IconBrandGithubFilled,
   IconExternalLink,
   IconEye,
   IconThumbDownFilled,
-  IconThumbUp,
   IconThumbUpFilled,
 } from "@tabler/icons-react";
+import { type NextPage } from "next";
+import { Inter } from "next/font/google";
+import localFont from "next/font/local";
+import Head from "next/head";
+import Link from "next/link";
 
-import { api } from "~/utils/api";
 import classNames from "classnames";
+import { api } from "~/utils/api";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -26,7 +25,17 @@ const origintech = localFont({
 });
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const videos = api.videos.get.useQuery(undefined, {
+    refetchInterval: 1000 * 60 * 2,
+  });
+  const sortBy: "views" | "likes" = "views";
+  const sortedVideos = videos.data?.sort((a, b) => {
+    if (sortBy === "views") {
+      return b.views - a.views;
+    } else {
+      return b.likes - a.likes;
+    }
+  });
 
   return (
     <>
@@ -61,9 +70,9 @@ const Home: NextPage = () => {
             видеата
           </h2>
           <div className="flex w-full max-w-lg flex-col items-center gap-4">
-            {Array.from({ length: 150 }).map((_, i) => (
+            {sortedVideos?.map((video, i) => (
               <Link
-                key={i}
+                key={video.id}
                 className={classNames(
                   "flex w-full flex-col items-center gap-4 rounded-xl p-4 transition-all hover:scale-105 sm:flex-row",
                   {
@@ -79,28 +88,31 @@ const Home: NextPage = () => {
                     "border-gray-700 bg-white/10 hover:bg-white/20": i >= 3,
                   }
                 )}
-                href="https://create.t3.gg/en/usage/first-steps"
+                href={`https://www.youtube.com/watch?v=${video.id}`}
                 target="_blank"
+                rel="noopener nofollow"
               >
                 <span className="grid aspect-video w-full place-items-center bg-black sm:w-36 ">
                   <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[#68cbe9] p-3 text-2xl font-semibold text-black">
                     #{i + 1}
                   </span>
                 </span>
-                <span className="flex w-full flex-col items-center justify-center text-center sm:w-auto sm:items-start sm:justify-start sm:text-left">
-                  <span className="text-2xl font-bold">First Steps</span>
+                <span className="flex flex-col items-center justify-center text-center sm:w-auto sm:items-start sm:justify-start sm:text-left">
+                  <span className="overflow-hidden text-2xl font-bold">
+                    {video.title}
+                  </span>
                   <span className="flex gap-4 text-xl font-semibold">
                     <span className="flex items-center gap-2">
                       <IconEye width="1em" />
-                      <span>100</span>
+                      <span>{video.views}</span>
                     </span>
                     <span className="flex items-center gap-2">
                       <IconThumbUpFilled width="1em" />
-                      <span>3</span>
+                      <span>{video.likes}</span>
                     </span>
                     <span className="flex items-center gap-2">
                       <IconThumbDownFilled width="1em" />
-                      <span>1</span>
+                      <span>{video.dislikes}</span>
                     </span>
                   </span>
                 </span>
