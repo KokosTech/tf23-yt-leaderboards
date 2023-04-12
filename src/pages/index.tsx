@@ -3,6 +3,14 @@ import Head from "next/head";
 import Link from "next/link";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
+import {
+  IconBrandGithubFilled,
+  IconExternalLink,
+  IconEye,
+  IconThumbDownFilled,
+  IconThumbUp,
+  IconThumbUpFilled,
+} from "@tabler/icons-react";
 
 import { api } from "~/utils/api";
 import classNames from "classnames";
@@ -81,11 +89,19 @@ const Home: NextPage = () => {
                 </span>
                 <span className="flex w-full flex-col items-center justify-center text-center sm:w-auto sm:items-start sm:justify-start sm:text-left">
                   <span className="text-2xl font-bold">First Steps</span>
-                  <span className="flex gap-2 text-xl font-semibold">
-                    <span>0</span>
-                    {/* dot */}
-                    <span>•</span>
-                    <span>0</span>
+                  <span className="flex gap-4 text-xl font-semibold">
+                    <span className="flex items-center gap-2">
+                      <IconEye width="1em" />
+                      <span>100</span>
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <IconThumbUpFilled width="1em" />
+                      <span>3</span>
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <IconThumbDownFilled width="1em" />
+                      <span>1</span>
+                    </span>
                   </span>
                 </span>
               </Link>
@@ -96,16 +112,17 @@ const Home: NextPage = () => {
               href="https://tuesfest.bg"
               target="_blank"
               rel="noopener nofollow"
-              className="cursor-pointer text-lg text-white transition-transform hover:scale-110 hover:underline"
+              className="flex cursor-pointer gap-1 text-lg text-white transition-transform hover:scale-110 hover:underline"
             >
-              TUES Fest 2023
+              <IconExternalLink width="1em" /> TUES Fest 2023
             </Link>
             <Link
               href="https://github.com/bvpav/tf23-yt-leaderboards"
               target="_blank"
               rel="noopener nofollow"
-              className="cursor-pointer text-lg text-white transition-transform hover:scale-110 hover:underline"
+              className="flex cursor-pointer gap-1 text-lg text-white transition-transform hover:scale-110 hover:underline"
             >
+              <IconBrandGithubFilled width="1em" />
               GitHub
             </Link>
           </div>
