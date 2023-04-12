@@ -13,6 +13,7 @@ import Link from "next/link";
 
 import classNames from "classnames";
 import { api } from "~/utils/api";
+import Image from "next/image";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -23,6 +24,13 @@ const origintech = localFont({
   src: "../assets/origintech.ttf",
   variable: "--font-origintech",
 });
+
+function shortenNameLength(name: string) {
+  if (name.length > 20) {
+    return name.slice(0, 20) + "...";
+  }
+  return name;
+}
 
 const Home: NextPage = () => {
   const videos = api.videos.get.useQuery(undefined, {
@@ -92,14 +100,20 @@ const Home: NextPage = () => {
                 target="_blank"
                 rel="noopener nofollow"
               >
-                <span className="grid aspect-video w-full place-items-center bg-black sm:w-36 ">
-                  <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[#68cbe9] p-3 text-2xl font-semibold text-black">
+                <span className="relative grid aspect-video w-full place-items-center bg-black sm:w-36 ">
+                  <Image
+                    src={`https://i.ytimg.com/vi/${video.id}/default.jpg`}
+                    alt={video.title}
+                    fill
+                    style={{ objectFit: "contain" }}
+                  />
+                  <span className="z-10 flex h-16 w-16 items-center justify-center rounded-full bg-[#68cbe9] p-3 text-2xl font-semibold text-black">
                     #{i + 1}
                   </span>
                 </span>
                 <span className="flex flex-col items-center justify-center text-center sm:w-auto sm:items-start sm:justify-start sm:text-left">
                   <span className="overflow-hidden text-2xl font-bold">
-                    {video.title}
+                    {shortenNameLength(video.title)}
                   </span>
                   <span className="flex gap-4 text-xl font-semibold">
                     <span className="flex items-center gap-2">
