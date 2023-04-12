@@ -29,12 +29,12 @@ const Home: NextPage = () => {
       </Head>
       <main
         className={classNames(
-          "flex min-h-screen flex-col items-center justify-center bg-black font-sans",
+          "flex min-h-screen flex-col items-center bg-black font-sans",
           inter.variable,
           origintech.variable
         )}
       >
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+        <div className="container flex flex-col items-center gap-12 px-4 py-16 ">
           <h1 className="text-center font-origintech text-5xl tracking-tight text-white sm:text-[5rem]">
             TUES{" "}
             <span className="bg-gradient-to-br from-[#68cbe9] via-[#7775b4] to-[#7b51a1] bg-clip-text font-origintech text-transparent">
@@ -42,41 +42,73 @@ const Home: NextPage = () => {
             </span>{" "}
             2023
           </h1>
-          <h2 className="text-3xl font-semibold text-white">
-            <span className="text-4xl font-bold text-yellow-400">Класация</span>{" "}
+          <h2 className="text-center text-3xl font-semibold text-white">
+            <span className="bg-gradient-to-r from-yellow-300 to-orange-400 bg-clip-text text-4xl font-bold text-transparent">
+              Класация
+            </span>{" "}
             на{" "}
             <span className="text-4xl font-extrabold">
               You<span className="text-red-500">Tube</span>
             </span>{" "}
             видеата
           </h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+          <div className="flex w-full max-w-lg flex-col items-center gap-4">
+            {Array.from({ length: 150 }).map((_, i) => (
+              <Link
+                key={i}
+                className={classNames(
+                  "flex w-full flex-col items-center gap-4 rounded-xl p-4 transition-all hover:scale-105 sm:flex-row",
+                  {
+                    "border-8": i < 3,
+                    "border ": i >= 3,
+                    "text-black": i < 2,
+                    "text-white": i >= 2,
+                    "border-yellow-500 bg-yellow-300 hover:bg-yellow-200":
+                      i === 0,
+                    "border-amber-600 bg-amber-500 hover:bg-amber-400": i === 1,
+                    "mb-8 border-gray-600 bg-gray-500 hover:bg-gray-400":
+                      i === 2,
+                    "border-gray-700 bg-white/10 hover:bg-white/20": i >= 3,
+                  }
+                )}
+                href="https://create.t3.gg/en/usage/first-steps"
+                target="_blank"
+              >
+                <span className="grid aspect-video w-full place-items-center bg-black sm:w-36 ">
+                  <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[#68cbe9] p-3 text-2xl font-semibold text-black">
+                    #{i + 1}
+                  </span>
+                </span>
+                <span className="flex w-full flex-col items-center justify-center text-center sm:w-auto sm:items-start sm:justify-start sm:text-left">
+                  <span className="text-2xl font-bold">First Steps</span>
+                  <span className="flex gap-2 text-xl font-semibold">
+                    <span>0</span>
+                    {/* dot */}
+                    <span>•</span>
+                    <span>0</span>
+                  </span>
+                </span>
+              </Link>
+            ))}
+          </div>
+          <div className="flex flex-row items-center gap-5">
             <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
+              href="https://tuesfest.bg"
               target="_blank"
+              rel="noopener nofollow"
+              className="cursor-pointer text-lg text-white transition-transform hover:scale-110 hover:underline"
             >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
+              TUES Fest 2023
             </Link>
             <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
+              href="https://github.com/bvpav/tf23-yt-leaderboards"
               target="_blank"
+              rel="noopener nofollow"
+              className="cursor-pointer text-lg text-white transition-transform hover:scale-110 hover:underline"
             >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
+              GitHub
             </Link>
           </div>
-          <p className="text-2xl text-white">
-            {hello.data ? hello.data.greeting : "Loading tRPC query..."}
-          </p>
         </div>
       </main>
     </>
