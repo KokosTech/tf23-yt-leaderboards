@@ -11,7 +11,7 @@ import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import Head from "next/head";
 import Link from "next/link";
-
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { createProxySSGHelpers as createServerSideHelpers } from "@trpc/react-query/ssg";
 import classNames from "classnames";
 import Image from "next/image";
@@ -128,6 +128,7 @@ const Home: NextPage = () => {
   const videos = api.videos.get.useQuery(undefined, {
     refetchInterval: 1000 * 60 * 2,
   });
+  const [animationParent] = useAutoAnimate();
   const [sortBy, setSortBy] = useState<"views" | "likes">("views");
   const sortedVideos = videos.data?.sort((a, b) => {
     if (sortBy === "views") {
@@ -188,7 +189,10 @@ const Home: NextPage = () => {
             </p>
           </header>
           <SortByRadio value={sortBy} onChange={setSortBy} />
-          <div className="flex w-full max-w-lg flex-col items-center gap-4">
+          <div
+            ref={animationParent}
+            className="flex w-full max-w-lg flex-col items-center gap-4"
+          >
             {sortedVideos?.map((video, i) => (
               <Link
                 key={video.id}
