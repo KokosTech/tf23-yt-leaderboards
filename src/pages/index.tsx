@@ -130,13 +130,40 @@ const Home: NextPage = () => {
   });
   const [animationParent] = useAutoAnimate();
   const [sortBy, setSortBy] = useState<"views" | "likes">("views");
-  const sortedVideos = videos.data?.sort((a, b) => {
-    if (sortBy === "views") {
-      return b.views - a.views;
-    } else {
-      return b.likes - a.likes;
-    }
-  });
+  const ranks = new Set<number>();
+  const sortedVideos = videos.data
+    ?.sort((a, b) => {
+      if (sortBy === "views") {
+        return (
+          b.views - a.views ||
+          b.likes - a.likes ||
+          a.title.localeCompare(b.title)
+        );
+      } else {
+        return (
+          b.likes - a.likes ||
+          b.views - a.views ||
+          a.title.localeCompare(b.title)
+        );
+      }
+    })
+    .map((video) => {
+      const rank =
+        new Set(
+          videos.data
+            .filter((v) => v[sortBy] > video[sortBy])
+            .map((v) => v[sortBy])
+        ).size + 1;
+      const isFirstInRank = !ranks.has(rank);
+      if (isFirstInRank) {
+        ranks.add(rank);
+      }
+      return {
+        ...video,
+        rank,
+        isFirstInRank,
+      };
+    });
 
   return (
     <>
@@ -193,22 +220,26 @@ const Home: NextPage = () => {
             ref={animationParent}
             className="flex w-full max-w-lg flex-col items-center gap-4"
           >
-            {sortedVideos?.map((video, i) => (
+            {sortedVideos?.map((video) => (
               <Link
                 key={video.id}
+                id={video.isFirstInRank ? `${video.rank}` : undefined}
                 className={classNames(
                   "flex w-full flex-col items-center gap-4 rounded-xl p-4 shadow-sm transition-all hover:scale-105 sm:flex-row",
                   {
-                    "border-8": i < 3,
-                    "border ": i >= 3,
-                    "text-black": i < 2,
-                    "text-white": i >= 2,
+                    "border-8": video.rank < 4,
+                    "border ": video.rank >= 4,
+                    "text-black": video.rank < 3,
+                    "text-white": video.rank >= 3,
                     "border-yellow-500 bg-yellow-300 hover:bg-yellow-200":
-                      i === 0,
-                    "border-amber-600 bg-amber-500 hover:bg-amber-400": i === 1,
-                    "mb-8 border-gray-600 bg-gray-500 hover:bg-gray-400":
-                      i === 2,
-                    "border-gray-700 bg-white/10 hover:bg-white/20": i >= 3,
+                      video.rank === 1,
+                    "border-amber-600 bg-amber-500 hover:bg-amber-400":
+                      video.rank === 2,
+                    "border-gray-600 bg-gray-500 hover:bg-gray-400":
+                      video.rank === 3,
+                    "border-gray-700 bg-white/10 hover:bg-white/20":
+                      video.rank >= 4,
+                    "mt-8": video.rank === 4 && video.isFirstInRank,
                   }
                 )}
                 href={`https://www.youtube.com/watch?v=${video.id}`}
@@ -218,7 +249,7 @@ const Home: NextPage = () => {
                 <span className="relative grid aspect-video w-full place-items-center bg-black sm:w-36 ">
                   <YtThumbnail id={video.id} title={video.title} />
                   <span className="z-10 flex h-16 w-16 items-center justify-center rounded-full bg-[#68cbe9] p-3 text-2xl font-semibold text-black">
-                    #{i + 1}
+                    #{video.rank}
                   </span>
                 </span>
                 <span className="flex flex-col items-center justify-center text-center sm:w-auto sm:items-start sm:justify-start sm:text-left">
