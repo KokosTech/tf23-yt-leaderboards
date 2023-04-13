@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 import SuperJSON from "superjson";
 import { appRouter } from "~/server/api/root";
 import { api } from "~/utils/api";
+import { RadioGroup } from "@headlessui/react";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -59,7 +60,7 @@ const RelativeDate = ({ date }: { date: Date }) => {
   const now = Date.now();
   const [, setFakeNow] = useState(now);
   const diff = date.getTime() - now;
-  const diffInMinutes = diff / 1000 / 60;
+  const diffInMinutes = Math.min(Math.round(diff / 1000 / 60), 0);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -70,8 +71,56 @@ const RelativeDate = ({ date }: { date: Date }) => {
 
   return (
     <time dateTime={date.toISOString()}>
-      {relativeFormat.format(Math.min(Math.round(diffInMinutes), 0), "minute")}
+      {diffInMinutes > 0
+        ? relativeFormat.format(diffInMinutes, "minute")
+        : "преди малко"}
     </time>
+  );
+};
+
+const SortByRadio = ({
+  value,
+  onChange,
+}: {
+  value: "views" | "likes";
+  onChange: (value: "views" | "likes") => void;
+}) => {
+  const options = [
+    {
+      value: "views",
+      label: "Гледания",
+      icon: IconEye,
+    },
+    {
+      value: "likes",
+      label: "Харесвания",
+      icon: IconThumbUpFilled,
+    },
+  ];
+  return (
+    <RadioGroup value={value} onChange={onChange}>
+      <RadioGroup.Label className="sr-only">Сортирай по</RadioGroup.Label>
+      <div className="flex items-center">
+        {options.map((opt) => (
+          <RadioGroup.Option
+            key={opt.value}
+            value={opt.value}
+            className="relative flex cursor-pointer items-center px-2 py-1 text-lg font-medium shadow-sm first:rounded-s-md last:rounded-e-md focus:outline-none  ui-checked:bg-white ui-not-checked:border-gray-700 ui-not-checked:bg-white/10"
+          >
+            <span
+              className="mt-0.5 flex items-center justify-center"
+              aria-hidden="true"
+            >
+              <opt.icon
+                className="ui-checked:text-black ui-not-checked:text-white"
+                width="2em"
+              />
+            </span>
+            <span className="sr-only">{opt.label}</span>
+          </RadioGroup.Option>
+        ))}
+      </div>
+    </RadioGroup>
   );
 };
 
@@ -79,7 +128,7 @@ const Home: NextPage = () => {
   const videos = api.videos.get.useQuery(undefined, {
     refetchInterval: 1000 * 60 * 2,
   });
-  const sortBy: "views" | "likes" = "views";
+  const [sortBy, setSortBy] = useState<"views" | "likes">("views");
   const sortedVideos = videos.data?.sort((a, b) => {
     if (sortBy === "views") {
       return b.views - a.views;
@@ -131,19 +180,20 @@ const Home: NextPage = () => {
                 <>
                   <IconRefresh width="1em" />{" "}
                   <span>
-                    Последно обновена{" "}
+                    Последно обновено{" "}
                     <RelativeDate date={new Date(videos.dataUpdatedAt)} />.
                   </span>
                 </>
               )}
             </p>
           </header>
+          <SortByRadio value={sortBy} onChange={setSortBy} />
           <div className="flex w-full max-w-lg flex-col items-center gap-4">
             {sortedVideos?.map((video, i) => (
               <Link
                 key={video.id}
                 className={classNames(
-                  "flex w-full flex-col items-center gap-4 rounded-xl p-4 transition-all hover:scale-105 sm:flex-row",
+                  "flex w-full flex-col items-center gap-4 rounded-xl p-4 shadow-sm transition-all hover:scale-105 sm:flex-row",
                   {
                     "border-8": i < 3,
                     "border ": i >= 3,
