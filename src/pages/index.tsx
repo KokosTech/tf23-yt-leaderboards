@@ -2,6 +2,7 @@ import {
   IconBrandGithubFilled,
   IconExternalLink,
   IconEye,
+  IconRefresh,
   IconThumbDownFilled,
   IconThumbUpFilled,
 } from "@tabler/icons-react";
@@ -14,7 +15,7 @@ import Link from "next/link";
 import { createProxySSGHelpers as createServerSideHelpers } from "@trpc/react-query/ssg";
 import classNames from "classnames";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SuperJSON from "superjson";
 import { appRouter } from "~/server/api/root";
 import { api } from "~/utils/api";
@@ -36,6 +37,10 @@ function shortenNameLength(name: string) {
   return name;
 }
 
+const relativeFormat = new Intl.RelativeTimeFormat("bg", {
+  numeric: "auto",
+});
+
 const YtThumbnail = (video: { id: string; title: string }) => {
   const [resolution, setResolution] = useState("maxresdefault");
 
@@ -47,6 +52,26 @@ const YtThumbnail = (video: { id: string; title: string }) => {
       style={{ objectFit: "contain" }}
       onError={() => setResolution("default")}
     />
+  );
+};
+
+const RelativeDate = ({ date }: { date: Date }) => {
+  const now = Date.now();
+  const [, setFakeNow] = useState(now);
+  const diff = date.getTime() - now;
+  const diffInMinutes = diff / 1000 / 60;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFakeNow(Date.now());
+    }, 1000 * 30);
+    return () => clearInterval(interval);
+  }, [date]);
+
+  return (
+    <time dateTime={date.toISOString()}>
+      {relativeFormat.format(Math.min(Math.round(diffInMinutes), 0), "minute")}
+    </time>
   );
 };
 
@@ -81,23 +106,38 @@ const Home: NextPage = () => {
         )}
       >
         <div className="container flex flex-col items-center gap-12 px-4 py-16 ">
-          <h1 className="text-center font-origintech text-5xl tracking-tight text-white sm:text-[5rem]">
-            TUES{" "}
-            <span className="bg-gradient-to-br from-[#68cbe9] via-[#7775b4] to-[#7b51a1] bg-clip-text font-origintech text-transparent">
-              Fest
-            </span>{" "}
-            2023
-          </h1>
-          <h2 className="text-center text-3xl font-semibold text-white">
-            <span className="bg-gradient-to-r from-yellow-300 to-orange-400 bg-clip-text text-4xl font-bold text-transparent">
-              Класация
-            </span>{" "}
-            на{" "}
-            <span className="text-4xl font-extrabold">
-              You<span className="text-red-500">Tube</span>
-            </span>{" "}
-            видеата
-          </h2>
+          <header className="flex flex-col items-center gap-3 text-center">
+            <h1 className="text-center font-origintech text-5xl tracking-tight text-white sm:text-[5rem]">
+              TUES{" "}
+              <span className="bg-gradient-to-br from-[#68cbe9] via-[#7775b4] to-[#7b51a1] bg-clip-text font-origintech text-transparent">
+                Fest
+              </span>{" "}
+              2023
+            </h1>
+            <h2 className="text-center text-3xl font-semibold text-white">
+              <span className="bg-gradient-to-r from-yellow-300 to-orange-400 bg-clip-text text-4xl font-bold text-transparent">
+                Класация
+              </span>{" "}
+              на{" "}
+              <span className="text-4xl font-extrabold">
+                You<span className="text-red-500">Tube</span>
+              </span>{" "}
+              видеата
+            </h2>
+            <p className="flex justify-center gap-1 text-white">
+              {videos.isFetching ? (
+                <span className="animate-pulse">Обновява се...</span>
+              ) : (
+                <>
+                  <IconRefresh width="1em" />{" "}
+                  <span>
+                    Последно обновена{" "}
+                    <RelativeDate date={new Date(videos.dataUpdatedAt)} />.
+                  </span>
+                </>
+              )}
+            </p>
+          </header>
           <div className="flex w-full max-w-lg flex-col items-center gap-4">
             {sortedVideos?.map((video, i) => (
               <Link
@@ -149,7 +189,7 @@ const Home: NextPage = () => {
               </Link>
             ))}
           </div>
-          <div className="flex flex-row items-center gap-5">
+          <footer className="flex flex-row items-center gap-5">
             <Link
               href="https://tuesfest.bg"
               target="_blank"
@@ -167,7 +207,7 @@ const Home: NextPage = () => {
               <IconBrandGithubFilled width="1em" />
               GitHub
             </Link>
-          </div>
+          </footer>
         </div>
       </main>
     </>
