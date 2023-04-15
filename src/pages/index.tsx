@@ -229,13 +229,13 @@ const Home: NextPage = () => {
                   {
                     "border-8": video.rank < 4,
                     "border ": video.rank >= 4,
-                    "text-black": video.rank < 3,
-                    "text-white": video.rank >= 3,
+                    "text-black": video.rank <= 3,
+                    "text-white": video.rank > 3,
                     "border-yellow-500 bg-yellow-300 hover:bg-yellow-200":
                       video.rank === 1,
                     "border-amber-600 bg-amber-500 hover:bg-amber-400":
                       video.rank === 3,
-                    "border-gray-600 bg-gray-500 hover:bg-gray-400":
+                    "border-gray-500 bg-gray-400 hover:bg-gray-300":
                       video.rank === 2,
                     "border-gray-700 bg-white/10 hover:bg-white/20":
                       video.rank >= 4,
