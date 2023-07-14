@@ -6,7 +6,6 @@ import { z } from "zod";
  */
 const server = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]),
-  INVIDIOUS_INSTANCE_URL: z.string().url(),
 });
 
 /**
@@ -25,7 +24,6 @@ const client = z.object({
  */
 const processEnv = {
   NODE_ENV: process.env.NODE_ENV,
-  INVIDIOUS_INSTANCE_URL: process.env.INVIDIOUS_INSTANCE_URL,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 
