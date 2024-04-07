@@ -1,7 +1,7 @@
 import { Innertube } from "youtubei.js";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
-const PLAYLIST_ID = "PL9bB-qR6xC5nauT7K_1_kfguwfj6JcbyE";
+const PLAYLIST_ID = "PL9bB-qR6xC5ljAIBKAaNW_3xKVfGEq1P6";
 
 async function fetchYtPlaylist(yt: Innertube, id: string) {
   const videos = [];
